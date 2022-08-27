@@ -1,7 +1,6 @@
 import styles from './Product.module.scss';
 import clsx from 'clsx';
 import Button from '../Button/Button';
-import PropTypes from 'prop-types';
 import { useState } from 'react';
 import shortid from 'shortid';
 
@@ -9,7 +8,6 @@ const Product = props => {
   const upper = (param) => {
     return param[0].toUpperCase() + param.slice(1);
   }
- console.log(props.sizes[0].name);
 
 
   const [currentColor, setCurrentColor] = useState([
@@ -18,12 +16,18 @@ const Product = props => {
     }
   ]);
 
-
   const [currentSize, setCurrentSize] = useState([
     {
-      size: undefined,
+      size: props.sizes[0].name,
+      price: props.sizes[0].additionalPrice,
     }
   ])
+
+
+  const getPrice = (param) => {
+    return props.basePrice + param;
+  }
+
 
   console.log('Current Size', currentSize);
   console.log('Current Color', currentColor);
@@ -43,17 +47,13 @@ const Product = props => {
       <div>
         <header>
           <h2 className={styles.name}>{props.title}</h2>
-          <span className={styles.price}>Price: {props.basePrice}$</span>
+          <span className={styles.price}>Price: {getPrice(currentSize.price)}$</span>
         </header>
         <form>
           <div className={styles.sizes}>
             <h3 className={styles.optionLabel}>Sizes</h3>
             <ul className={styles.choices}>
-              
-              <li><button type="button" className={styles.active}>S</button></li>
-              <li><button type="button">M</button></li>
-              <li><button type="button">L</button></li>
-              <li><button type="button">XL</button></li>
+              {props.sizes.map((size =>  <li key={shortid()}><button type="button" onClick={(e) => setCurrentSize({size: size.name, price: size.additionalPrice})} className={clsx(size.name === currentSize.size && styles.active)}>{size.name}</button></li>))}
             </ul>
           </div>
           <div className={styles.colors}>
@@ -70,9 +70,5 @@ const Product = props => {
     </article>
   )
 };
-
-Product.propTypes = {
-
-}
 
 export default Product;
